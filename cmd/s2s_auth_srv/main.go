@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"gopkg.in/oauth2.v3/generates"
 	"gopkg.in/oauth2.v3/models"
@@ -47,7 +47,7 @@ func main() {
 	})
 
 	http.HandleFunc("/token", func(w http.ResponseWriter, r *http.Request) {
-		srv.HandleTokenRequest(w, r)
+		_ = srv.HandleTokenRequest(w, r)
 	})
 
 	http.HandleFunc("/credentials", func(w http.ResponseWriter, r *http.Request) {
@@ -63,11 +63,11 @@ func main() {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"CLIENT_ID": clientId, "CLIENT_SECRET": clientSecret})
+		_ = json.NewEncoder(w).Encode(map[string]string{"CLIENT_ID": clientId, "CLIENT_SECRET": clientSecret})
 	})
 
 	http.HandleFunc("/protected", validateToken(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, I'm protected"))
+		_, _ = w.Write([]byte("Hello, I'm protected"))
 	}, srv))
 
 	log.Fatal(http.ListenAndServe(":9096", nil))
